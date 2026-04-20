@@ -389,6 +389,7 @@ pub struct Connectors {
     pub trustly: ConnectorParams,
     pub itaubank: ConnectorParams,
     pub sanlammultidata: ConnectorParams,
+    pub pinelabs_online: ConnectorParams,
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug, Default, PartialEq, config_patch_derive::Patch)]
