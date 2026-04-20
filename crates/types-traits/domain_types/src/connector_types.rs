@@ -140,6 +140,7 @@ pub enum ConnectorEnum {
     Itaubank,
     Sanlam,
     PinelabsOnline,
+    Ecpay,
 }
 
 impl ForeignTryFrom<grpc_api_types::payments::Connector> for ConnectorEnum {
@@ -227,7 +228,9 @@ impl ForeignTryFrom<grpc_api_types::payments::Connector> for ConnectorEnum {
             grpc_api_types::payments::Connector::Finix => Ok(Self::Finix),
             grpc_api_types::payments::Connector::Trustly => Ok(Self::Trustly),
             grpc_api_types::payments::Connector::Itaubank => Ok(Self::Itaubank),
+            grpc_api_types::payments::Connector::Sanlam => Ok(Self::Sanlam),
             grpc_api_types::payments::Connector::PinelabsOnline => Ok(Self::PinelabsOnline),
+            grpc_api_types::payments::Connector::Ecpay => Ok(Self::Ecpay),
             grpc_api_types::payments::Connector::Unspecified => {
                 Err(IntegrationError::InvalidDataFormat {
                     field_name: "connector",
@@ -4114,6 +4117,7 @@ impl ForeignTryFrom<grpc_api_types::payments::connector_specific_config::Config>
             AuthType::Authorizedotnet(_) => Ok(Self::Authorizedotnet),
             AuthType::Ppro(_) => Ok(Self::Ppro),
             AuthType::PinelabsOnline(_) => Ok(Self::PinelabsOnline),
+            AuthType::Ecpay(_) => Ok(Self::Ecpay),
         }
     }
 }

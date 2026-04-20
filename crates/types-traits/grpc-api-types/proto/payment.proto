@@ -743,6 +743,7 @@ enum Connector {
   TRUSTLY = 115;
   SANLAM = 116;
   PINELABS_ONLINE = 117;
+  ECPAY = 118;
 }
 
 // Payment method types
@@ -3897,6 +3898,13 @@ message ItaubankConfig {
   optional string base_url = 50;
 }
 
+message EcpayConfig {
+  SecretString api_key = 1;
+  SecretString hash_key = 2;
+  SecretString hash_iv = 3;
+  optional string base_url = 50;
+}
+
 message GigadatConfig {
   SecretString campaign_id = 1;
   SecretString access_token = 2;
@@ -4310,6 +4318,9 @@ message ConnectorSpecificConfig {
 
     // PINELABS_ONLINE = 117
     PinelabsOnlineConfig pinelabs_online = 117;
+
+    // ECPAY = 118
+    EcpayConfig ecpay = 118;
   }
 }
 
