@@ -534,6 +534,21 @@ impl Connectors {
             ConnectorEnum::Worldpay => {
                 patched.worldpay.apply(params_patch);
             }
+            ConnectorEnum::Rapyd => {
+                patched.rapyd.apply(params_patch);
+            }
+            ConnectorEnum::Fiserv => {
+                patched.fiserv.apply(params_patch);
+            }
+            ConnectorEnum::Nexinets => {
+                patched.nexinets.apply(params_patch);
+            }
+            ConnectorEnum::Elavon => {
+                patched.elavon.apply(params_patch);
+            }
+            ConnectorEnum::Novalnet => {
+                patched.novalnet.apply(params_patch);
+            }
             ConnectorEnum::Trustpay => {
                 // TrustPay uses ConnectorParamsWithMoreUrls which has different fields
                 let trustpay_patch = ConnectorParamsWithMoreUrlsPatch {
@@ -549,7 +564,7 @@ impl Connectors {
                     context: IntegrationErrorContext {
                         additional_context: Some(format!(
                             "Connector '{}' is not supported for dynamic URL patching from superposition. \
-                             Supported connectors: stripe, adyen, paypal, braintree, checkout, cybersource, revolut, worldpay, trustpay",
+                             Supported connectors: stripe, adyen, paypal, braintree, checkout, cybersource, revolut, worldpay, rapyd, fiserv, nexinets, elavon, novalnet, trustpay",
                             connector
                         )),
                         ..Default::default()
