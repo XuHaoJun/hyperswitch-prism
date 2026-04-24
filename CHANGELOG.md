@@ -19,6 +19,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - - -
 
+## 2026.04.24.1
+
+### Bug Fixes
+
+- CS_ format connector_request_kafka.brokers parsing list fix ([#1172](https://github.com/juspay/connector-service/pull/1172)) ([`8e483e6`](https://github.com/juspay/connector-service/commit/8e483e603d9bbbea706beade9de918047f168194))
+
+### Refactors
+
+- **connector:** Resolved amount & txnId population issue. ([#1169](https://github.com/juspay/connector-service/pull/1169)) ([`a195cdb`](https://github.com/juspay/connector-service/commit/a195cdb518a88be733c6d3edcd6013349499cb3d))
+
+**Full Changelog:** [`2026.04.24.0...2026.04.24.1`](https://github.com/juspay/connector-service/compare/2026.04.24.0...2026.04.24.1)
+
+- - -
+
 ## 2026.04.24.0
 
 ### Features
