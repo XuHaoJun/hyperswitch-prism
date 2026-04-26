@@ -108,6 +108,7 @@ impl<T: PaymentMethodDataTypes + Debug + Default + Send + Sync + 'static + serde
             ConnectorEnum::Itaubank => Box::new(connectors::Itaubank::new()),
             ConnectorEnum::PinelabsOnline => Box::new(connectors::PinelabsOnline::new()),
             ConnectorEnum::Ecpay => Box::new(connectors::Ecpay::new()),
+            ConnectorEnum::Imerchantsolutions => Box::new(connectors::Imerchantsolutions::new()),
         }
     }
 }

@@ -19,6 +19,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - - -
 
+## 2026.04.24.1
+
+### Bug Fixes
+
+- CS_ format connector_request_kafka.brokers parsing list fix ([#1172](https://github.com/juspay/connector-service/pull/1172)) ([`8e483e6`](https://github.com/juspay/connector-service/commit/8e483e603d9bbbea706beade9de918047f168194))
+
+### Refactors
+
+- **connector:** Resolved amount & txnId population issue. ([#1169](https://github.com/juspay/connector-service/pull/1169)) ([`a195cdb`](https://github.com/juspay/connector-service/commit/a195cdb518a88be733c6d3edcd6013349499cb3d))
+
+**Full Changelog:** [`2026.04.24.0...2026.04.24.1`](https://github.com/juspay/connector-service/compare/2026.04.24.0...2026.04.24.1)
+
+- - -
+
+## 2026.04.24.0
+
+### Features
+
+- **connector:** [iMerchant Solutions] Implement Cards Non-3DS Flow ([#601](https://github.com/juspay/connector-service/pull/601)) ([`205fcea`](https://github.com/juspay/connector-service/commit/205fcea70b8205d5f2a7f3299921efe27b848b08))
+
+**Full Changelog:** [`2026.04.23.0...2026.04.24.0`](https://github.com/juspay/connector-service/compare/2026.04.23.0...2026.04.24.0)
+
+- - -
+
+## 2026.04.23.0
+
+### Features
+
+- **connector:**
+  - Implement INCREMENTAL_AUTH for novalnet ([#1111](https://github.com/juspay/connector-service/pull/1111)) ([`a97df3d`](https://github.com/juspay/connector-service/commit/a97df3dd1b0b7ff1a33597980df8d1bf74834797))
+  - Implement INCREMENTAL_AUTH for worldpay ([#1103](https://github.com/juspay/connector-service/pull/1103)) ([`ce924db`](https://github.com/juspay/connector-service/commit/ce924db758055fd58829577135ffaaac4278ed68))
+  - Add wallet, netbanking flows for Razorpay ([#1093](https://github.com/juspay/connector-service/pull/1093)) ([`4590e18`](https://github.com/juspay/connector-service/commit/4590e18b6ee7ad6e9b8a23dac28507ae8e7b0ef7))
+  - Implement INCREMENTAL_AUTH for adyen ([#1108](https://github.com/juspay/connector-service/pull/1108)) ([`5afb1a8`](https://github.com/juspay/connector-service/commit/5afb1a8595d61f8550647cd4b7ee88430b7ebec2))
+
+### Bug Fixes
+
+- Added RAPYD FISERV iand Nexi Nets n params patch ([#1096](https://github.com/juspay/connector-service/pull/1096)) ([`7f9cfcf`](https://github.com/juspay/connector-service/commit/7f9cfcfa0b8cdc084fae0ed54e697db70136a8ab))
+- Remove IntegrationError::not_implemented helper ([#1157](https://github.com/juspay/connector-service/pull/1157)) ([`50b1065`](https://github.com/juspay/connector-service/commit/50b10658c00a1f794190497bbf77b98ede43659c))
+
+### Refactors
+
+- **connector:** Handle redirect response, extract amount from captures/authorizations, and fix refund sync deserialization ([#1122](https://github.com/juspay/connector-service/pull/1122)) ([`357046c`](https://github.com/juspay/connector-service/commit/357046c8e36d2b9e292774af0cb7df51dd970403))
+
+**Full Changelog:** [`2026.04.22.0...2026.04.23.0`](https://github.com/juspay/connector-service/compare/2026.04.22.0...2026.04.23.0)
+
+- - -
+
+## 2026.04.22.0
+
+### Features
+
+- **connector:**
+  - Implement INCREMENTAL_AUTH for cybersource ([#1109](https://github.com/juspay/connector-service/pull/1109)) ([`8001714`](https://github.com/juspay/connector-service/commit/800171447474c9e2031416d89e35d10f4086d4a7))
+  - Implement INCREMENTAL_AUTH for trustpayments ([#1119](https://github.com/juspay/connector-service/pull/1119)) ([`2e3cf14`](https://github.com/juspay/connector-service/commit/2e3cf147f32e7f2713301bd03c154e36bef62d5e))
+
+**Full Changelog:** [`2026.04.21.1...2026.04.22.0`](https://github.com/juspay/connector-service/compare/2026.04.21.1...2026.04.22.0)
+
+- - -
+
 ## 2026.04.21.1
 
 ### Features

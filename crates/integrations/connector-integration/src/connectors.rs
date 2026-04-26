@@ -247,3 +247,6 @@ pub use self::pinelabs_online::PinelabsOnline;
 
 pub mod ecpay;
 pub use self::ecpay::Ecpay;
+
+pub mod imerchantsolutions;
+pub use self::imerchantsolutions::Imerchantsolutions;
