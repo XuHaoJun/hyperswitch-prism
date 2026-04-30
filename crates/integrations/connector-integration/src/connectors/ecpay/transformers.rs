@@ -142,7 +142,12 @@ pub struct EcpayAuthorizeRequest {
 impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Serialize>
     TryFrom<
         EcpayRouterData<
-            RouterDataV2<Authorize, PaymentFlowData, PaymentsAuthorizeData<T>, PaymentsResponseData>,
+            RouterDataV2<
+                Authorize,
+                PaymentFlowData,
+                PaymentsAuthorizeData<T>,
+                PaymentsResponseData,
+            >,
             T,
         >,
     > for EcpayAuthorizeRequest
@@ -151,16 +156,26 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
 
     fn try_from(
         item: EcpayRouterData<
-            RouterDataV2<Authorize, PaymentFlowData, PaymentsAuthorizeData<T>, PaymentsResponseData>,
+            RouterDataV2<
+                Authorize,
+                PaymentFlowData,
+                PaymentsAuthorizeData<T>,
+                PaymentsResponseData,
+            >,
             T,
         >,
     ) -> Result<Self, Self::Error> {
-        let auth = EcpayAuthType::try_from(&item.router_data.connector_config)
-            .change_context(errors::IntegrationError::FailedToObtainAuthType {
+        let auth = EcpayAuthType::try_from(&item.router_data.connector_config).change_context(
+            errors::IntegrationError::FailedToObtainAuthType {
                 context: errors::IntegrationErrorContext::default(),
-            })?;
+            },
+        )?;
 
-        let merchant_trade_no = item.router_data.resource_common_data.connector_request_reference_id.clone();
+        let merchant_trade_no = item
+            .router_data
+            .resource_common_data
+            .connector_request_reference_id
+            .clone();
         let now_utc = chrono::Utc::now();
         let merchant_trade_date = now_utc
             .with_timezone(&chrono::FixedOffset::east_opt(8 * 3600).unwrap())
@@ -177,12 +192,15 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
 
         let item_name = "Product".to_string();
 
-        let return_url = item.router_data.request.webhook_url.clone().ok_or_else(|| {
-            errors::IntegrationError::MissingRequiredField {
+        let return_url = item
+            .router_data
+            .request
+            .webhook_url
+            .clone()
+            .ok_or_else(|| errors::IntegrationError::MissingRequiredField {
                 field_name: "webhook_url",
                 context: errors::IntegrationErrorContext::default(),
-            }
-        })?;
+            })?;
 
         let choose_payment = "ALL".to_string();
 
@@ -242,7 +260,15 @@ pub struct EcpayAuthorizeResponse {
 
 impl<T: PaymentMethodDataTypes>
     TryFrom<
-        ResponseRouterData<EcpayAuthorizeResponse, RouterDataV2<Authorize, PaymentFlowData, PaymentsAuthorizeData<T>, PaymentsResponseData>>,
+        ResponseRouterData<
+            EcpayAuthorizeResponse,
+            RouterDataV2<
+                Authorize,
+                PaymentFlowData,
+                PaymentsAuthorizeData<T>,
+                PaymentsResponseData,
+            >,
+        >,
     > for RouterDataV2<Authorize, PaymentFlowData, PaymentsAuthorizeData<T>, PaymentsResponseData>
 {
     type Error = Report<errors::ConnectorError>;
@@ -250,7 +276,12 @@ impl<T: PaymentMethodDataTypes>
     fn try_from(
         item: ResponseRouterData<
             EcpayAuthorizeResponse,
-            RouterDataV2<Authorize, PaymentFlowData, PaymentsAuthorizeData<T>, PaymentsResponseData>,
+            RouterDataV2<
+                Authorize,
+                PaymentFlowData,
+                PaymentsAuthorizeData<T>,
+                PaymentsResponseData,
+            >,
         >,
     ) -> Result<Self, Self::Error> {
         let redirection_data = Some(Box::new(RedirectForm::Form {
@@ -312,10 +343,11 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
             T,
         >,
     ) -> Result<Self, Self::Error> {
-        let auth = EcpayAuthType::try_from(&item.router_data.connector_config)
-            .change_context(errors::IntegrationError::FailedToObtainAuthType {
+        let auth = EcpayAuthType::try_from(&item.router_data.connector_config).change_context(
+            errors::IntegrationError::FailedToObtainAuthType {
                 context: errors::IntegrationErrorContext::default(),
-            })?;
+            },
+        )?;
 
         let merchant_trade_no = item
             .router_data
@@ -364,7 +396,10 @@ pub struct EcpayPSyncResponse {
 
 impl
     TryFrom<
-        ResponseRouterData<EcpayPSyncResponse, RouterDataV2<PSync, PaymentFlowData, PaymentsSyncData, PaymentsResponseData>>,
+        ResponseRouterData<
+            EcpayPSyncResponse,
+            RouterDataV2<PSync, PaymentFlowData, PaymentsSyncData, PaymentsResponseData>,
+        >,
     > for RouterDataV2<PSync, PaymentFlowData, PaymentsSyncData, PaymentsResponseData>
 {
     type Error = Report<errors::ConnectorError>;
@@ -431,18 +466,27 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
             T,
         >,
     ) -> Result<Self, Self::Error> {
-        let auth = EcpayAuthType::try_from(&item.router_data.connector_config)
-            .change_context(errors::IntegrationError::FailedToObtainAuthType {
+        let auth = EcpayAuthType::try_from(&item.router_data.connector_config).change_context(
+            errors::IntegrationError::FailedToObtainAuthType {
                 context: errors::IntegrationErrorContext::default(),
-            })?;
+            },
+        )?;
 
-        let merchant_trade_no = item.router_data.request.connector_transaction_id.get_connector_transaction_id()
+        let merchant_trade_no = item
+            .router_data
+            .request
+            .connector_transaction_id
+            .get_connector_transaction_id()
             .change_context(errors::IntegrationError::MissingConnectorTransactionID {
                 context: errors::IntegrationErrorContext::default(),
             })?;
         let trade_no = merchant_trade_no.clone();
 
-        let total_amount = item.router_data.request.minor_amount_to_capture.get_amount_as_i64();
+        let total_amount = item
+            .router_data
+            .request
+            .minor_amount_to_capture
+            .get_amount_as_i64();
 
         let mut params = HashMap::new();
         params.insert("MerchantID".to_string(), auth.merchant_id.peek().clone());
@@ -479,7 +523,10 @@ pub struct EcpayCaptureResponse {
 
 impl
     TryFrom<
-        ResponseRouterData<EcpayCaptureResponse, RouterDataV2<Capture, PaymentFlowData, PaymentsCaptureData, PaymentsResponseData>>,
+        ResponseRouterData<
+            EcpayCaptureResponse,
+            RouterDataV2<Capture, PaymentFlowData, PaymentsCaptureData, PaymentsResponseData>,
+        >,
     > for RouterDataV2<Capture, PaymentFlowData, PaymentsCaptureData, PaymentsResponseData>
 {
     type Error = Report<errors::ConnectorError>;
@@ -532,10 +579,7 @@ pub struct EcpayRefundRequest {
 
 impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Serialize>
     TryFrom<
-        EcpayRouterData<
-            RouterDataV2<Refund, RefundFlowData, RefundsData, RefundsResponseData>,
-            T,
-        >,
+        EcpayRouterData<RouterDataV2<Refund, RefundFlowData, RefundsData, RefundsResponseData>, T>,
     > for EcpayRefundRequest
 {
     type Error = Report<errors::IntegrationError>;
@@ -546,14 +590,19 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
             T,
         >,
     ) -> Result<Self, Self::Error> {
-        let auth = EcpayAuthType::try_from(&item.router_data.connector_config)
-            .change_context(errors::IntegrationError::FailedToObtainAuthType {
+        let auth = EcpayAuthType::try_from(&item.router_data.connector_config).change_context(
+            errors::IntegrationError::FailedToObtainAuthType {
                 context: errors::IntegrationErrorContext::default(),
-            })?;
+            },
+        )?;
 
         let merchant_trade_no = item.router_data.request.connector_transaction_id.clone();
         let trade_no = merchant_trade_no.clone();
-        let total_amount = item.router_data.request.minor_refund_amount.get_amount_as_i64();
+        let total_amount = item
+            .router_data
+            .request
+            .minor_refund_amount
+            .get_amount_as_i64();
 
         let mut params = HashMap::new();
         params.insert("MerchantID".to_string(), auth.merchant_id.peek().clone());
@@ -590,7 +639,10 @@ pub struct EcpayRefundResponse {
 
 impl
     TryFrom<
-        ResponseRouterData<EcpayRefundResponse, RouterDataV2<Refund, RefundFlowData, RefundsData, RefundsResponseData>>,
+        ResponseRouterData<
+            EcpayRefundResponse,
+            RouterDataV2<Refund, RefundFlowData, RefundsData, RefundsResponseData>,
+        >,
     > for RouterDataV2<Refund, RefundFlowData, RefundsData, RefundsResponseData>
 {
     type Error = Report<errors::ConnectorError>;
@@ -646,10 +698,11 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
             T,
         >,
     ) -> Result<Self, Self::Error> {
-        let auth = EcpayAuthType::try_from(&item.router_data.connector_config)
-            .change_context(errors::IntegrationError::FailedToObtainAuthType {
+        let auth = EcpayAuthType::try_from(&item.router_data.connector_config).change_context(
+            errors::IntegrationError::FailedToObtainAuthType {
                 context: errors::IntegrationErrorContext::default(),
-            })?;
+            },
+        )?;
 
         let merchant_trade_no = item.router_data.request.connector_transaction_id.clone();
         let time_stamp = chrono::Utc::now().timestamp();
@@ -689,7 +742,10 @@ pub struct EcpayRSyncResponse {
 
 impl
     TryFrom<
-        ResponseRouterData<EcpayRSyncResponse, RouterDataV2<RSync, RefundFlowData, RefundSyncData, RefundsResponseData>>,
+        ResponseRouterData<
+            EcpayRSyncResponse,
+            RouterDataV2<RSync, RefundFlowData, RefundSyncData, RefundsResponseData>,
+        >,
     > for RouterDataV2<RSync, RefundFlowData, RefundSyncData, RefundsResponseData>
 {
     type Error = Report<errors::ConnectorError>;
@@ -747,10 +803,11 @@ impl<T: PaymentMethodDataTypes + std::fmt::Debug + Sync + Send + 'static + Seria
             T,
         >,
     ) -> Result<Self, Self::Error> {
-        let auth = EcpayAuthType::try_from(&item.router_data.connector_config)
-            .change_context(errors::IntegrationError::FailedToObtainAuthType {
+        let auth = EcpayAuthType::try_from(&item.router_data.connector_config).change_context(
+            errors::IntegrationError::FailedToObtainAuthType {
                 context: errors::IntegrationErrorContext::default(),
-            })?;
+            },
+        )?;
 
         let merchant_trade_no = item.router_data.request.connector_transaction_id.clone();
         let trade_no = merchant_trade_no.clone();
@@ -791,7 +848,10 @@ pub struct EcpayVoidResponse {
 
 impl
     TryFrom<
-        ResponseRouterData<EcpayVoidResponse, RouterDataV2<Void, PaymentFlowData, PaymentVoidData, PaymentsResponseData>>,
+        ResponseRouterData<
+            EcpayVoidResponse,
+            RouterDataV2<Void, PaymentFlowData, PaymentVoidData, PaymentsResponseData>,
+        >,
     > for RouterDataV2<Void, PaymentFlowData, PaymentVoidData, PaymentsResponseData>
 {
     type Error = Report<errors::ConnectorError>;
@@ -842,9 +902,9 @@ pub struct EcpayErrorResponse {
 // GetFormData implementations
 // ============================================================================
 
-use common_utils::request::MultipartData;
 use crate::connectors::macros::GetFormData;
 use crate::utils::build_form_from_struct;
+use common_utils::request::MultipartData;
 
 impl GetFormData for EcpayAuthorizeRequest {
     fn get_form_data(&self) -> MultipartData {

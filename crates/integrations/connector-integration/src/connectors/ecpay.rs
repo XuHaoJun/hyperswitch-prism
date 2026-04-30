@@ -11,20 +11,21 @@ use domain_types::{
         CreateConnectorCustomer, CreateOrder, DefendDispute, IncrementalAuthorization,
         MandateRevoke, PSync, PaymentMethodToken, PostAuthenticate, PreAuthenticate, RSync, Refund,
         RepeatPayment, ServerAuthenticationToken, ServerSessionAuthenticationToken, SetupMandate,
-        SubmitEvidence, Void, VoidPC, VerifyWebhookSource,
+        SubmitEvidence, VerifyWebhookSource, Void, VoidPC,
     },
     connector_types::{
         AcceptDisputeData, ClientAuthenticationTokenRequestData, ConnectorCustomerData,
         ConnectorCustomerResponse, ConnectorWebhookSecrets, DisputeDefendData, DisputeFlowData,
         DisputeResponseData, EventType, MandateRevokeRequestData, MandateRevokeResponseData,
         PaymentCreateOrderData, PaymentCreateOrderResponse, PaymentFlowData,
-        PaymentMethodTokenResponse, PaymentMethodTokenizationData, PaymentsCancelPostCaptureData,
-        PaymentVoidData, PaymentsAuthenticateData, PaymentsAuthorizeData, PaymentsCaptureData,
-        PaymentsPostAuthenticateData, PaymentsPreAuthenticateData, PaymentsResponseData,
-        PaymentsSyncData, RefundFlowData, RefundSyncData, RefundsData, RefundsResponseData,
-        RequestDetails, ServerAuthenticationTokenRequestData, ServerAuthenticationTokenResponseData,
-        ServerSessionAuthenticationTokenRequestData, ServerSessionAuthenticationTokenResponseData,
-        SetupMandateRequestData, SubmitEvidenceData, VerifyWebhookSourceFlowData,
+        PaymentMethodTokenResponse, PaymentMethodTokenizationData, PaymentVoidData,
+        PaymentsAuthenticateData, PaymentsAuthorizeData, PaymentsCancelPostCaptureData,
+        PaymentsCaptureData, PaymentsPostAuthenticateData, PaymentsPreAuthenticateData,
+        PaymentsResponseData, PaymentsSyncData, RefundFlowData, RefundSyncData, RefundsData,
+        RefundsResponseData, RequestDetails, ServerAuthenticationTokenRequestData,
+        ServerAuthenticationTokenResponseData, ServerSessionAuthenticationTokenRequestData,
+        ServerSessionAuthenticationTokenResponseData, SetupMandateRequestData, SubmitEvidenceData,
+        VerifyWebhookSourceFlowData,
     },
     payment_method_data::PaymentMethodDataTypes,
     router_data::{ConnectorSpecificConfig, ErrorResponse},
@@ -32,6 +33,11 @@ use domain_types::{
     router_request_types::VerifyWebhookSourceRequestData,
     router_response_types::{Response, VerifyWebhookSourceResponseData},
     types::Connectors,
+};
+use ecpay::{
+    EcpayAuthorizeRequest, EcpayAuthorizeResponse, EcpayCaptureRequest, EcpayCaptureResponse,
+    EcpayPSyncRequest, EcpayPSyncResponse, EcpayRSyncRequest, EcpayRSyncResponse,
+    EcpayRefundRequest, EcpayRefundResponse, EcpayVoidRequest, EcpayVoidResponse,
 };
 use error_stack::ResultExt;
 use hyperswitch_masking::{Maskable, PeekInterface};
@@ -41,11 +47,6 @@ use interfaces::{
 };
 use serde::Serialize;
 use transformers as ecpay;
-use ecpay::{
-    EcpayAuthorizeRequest, EcpayAuthorizeResponse, EcpayCaptureRequest, EcpayCaptureResponse,
-    EcpayPSyncRequest, EcpayPSyncResponse, EcpayRefundRequest, EcpayRefundResponse,
-    EcpayRSyncRequest, EcpayRSyncResponse, EcpayVoidRequest, EcpayVoidResponse,
-};
 
 use super::macros;
 use crate::{types::ResponseRouterData, with_error_response_body};
@@ -142,8 +143,7 @@ impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize> Conn
         event_builder: Option<&mut events::Event>,
     ) -> CustomResult<ErrorResponse, ConnectorError> {
         let body = String::from_utf8_lossy(&res.response);
-        let params: HashMap<String, String> =
-            serde_urlencoded::from_str(&body).unwrap_or_default();
+        let params: HashMap<String, String> = serde_urlencoded::from_str(&body).unwrap_or_default();
 
         let code = params
             .get("RtnCode")
@@ -421,11 +421,10 @@ impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize>
         _connector_account_details: Option<ConnectorSpecificConfig>,
     ) -> Result<bool, error_stack::Report<WebhookError>> {
         let body = String::from_utf8_lossy(&request.body);
-        let params: HashMap<String, String> =
-            serde_urlencoded::from_str(&body).map_err(|_| {
-                error_stack::report!(WebhookError::WebhookSourceVerificationFailed)
-                    .attach_printable("Failed to parse ECPay webhook body as form data")
-            })?;
+        let params: HashMap<String, String> = serde_urlencoded::from_str(&body).map_err(|_| {
+            error_stack::report!(WebhookError::WebhookSourceVerificationFailed)
+                .attach_printable("Failed to parse ECPay webhook body as form data")
+        })?;
 
         let secrets = connector_webhook_secret.ok_or_else(|| {
             error_stack::report!(WebhookError::WebhookSourceVerificationFailed)
@@ -455,11 +454,10 @@ impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize>
         request: RequestDetails,
     ) -> Result<EventType, error_stack::Report<WebhookError>> {
         let body = String::from_utf8_lossy(&request.body);
-        let params: HashMap<String, String> =
-            serde_urlencoded::from_str(&body).map_err(|_| {
-                error_stack::report!(WebhookError::WebhookSourceVerificationFailed)
-                    .attach_printable("Failed to parse ECPay webhook body as form data")
-            })?;
+        let params: HashMap<String, String> = serde_urlencoded::from_str(&body).map_err(|_| {
+            error_stack::report!(WebhookError::WebhookSourceVerificationFailed)
+                .attach_printable("Failed to parse ECPay webhook body as form data")
+        })?;
 
         let rtn_code = params.get("RtnCode").ok_or_else(|| {
             error_stack::report!(WebhookError::WebhookSourceVerificationFailed)
@@ -610,32 +608,20 @@ impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize>
 }
 
 impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize>
-    ConnectorIntegrationV2<
-        SubmitEvidence,
-        DisputeFlowData,
-        SubmitEvidenceData,
-        DisputeResponseData,
-    > for Ecpay<T>
+    ConnectorIntegrationV2<SubmitEvidence, DisputeFlowData, SubmitEvidenceData, DisputeResponseData>
+    for Ecpay<T>
 {
 }
 
 impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize>
-    ConnectorIntegrationV2<
-        DefendDispute,
-        DisputeFlowData,
-        DisputeDefendData,
-        DisputeResponseData,
-    > for Ecpay<T>
+    ConnectorIntegrationV2<DefendDispute, DisputeFlowData, DisputeDefendData, DisputeResponseData>
+    for Ecpay<T>
 {
 }
 
 impl<T: PaymentMethodDataTypes + Debug + Sync + Send + 'static + Serialize>
-    ConnectorIntegrationV2<
-        Accept,
-        DisputeFlowData,
-        AcceptDisputeData,
-        DisputeResponseData,
-    > for Ecpay<T>
+    ConnectorIntegrationV2<Accept, DisputeFlowData, AcceptDisputeData, DisputeResponseData>
+    for Ecpay<T>
 {
 }
 
