@@ -390,6 +390,7 @@ pub struct Connectors {
     pub itaubank: ConnectorParams,
     pub sanlam: ConnectorParams,
     pub pinelabs_online: ConnectorParams,
+    pub ecpay: ConnectorParams,
     pub easebuzz: ConnectorParams,
     pub imerchantsolutions: ConnectorParams,
     pub axisbank: ConnectorParams,

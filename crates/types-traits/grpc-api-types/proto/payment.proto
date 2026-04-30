@@ -753,6 +753,7 @@ enum Connector {
   IMERCHANTSOLUTIONS = 118;
   AXISBANK = 119;
   EASEBUZZ = 120;
+  ECPAY = 121;
 }
 
 // Payment method types
@@ -4007,6 +4008,13 @@ message ItaubankConfig {
   optional string base_url = 50;
 }
 
+message EcpayConfig {
+  SecretString api_key = 1;
+  SecretString hash_key = 2;
+  SecretString hash_iv = 3;
+  optional string base_url = 50;
+}
+
 message GigadatConfig {
   SecretString campaign_id = 1;
   SecretString access_token = 2;
@@ -4449,6 +4457,9 @@ message ConnectorSpecificConfig {
 
     // EASEBUZZ = 120
     EasebuzzConfig easebuzz = 120;
+
+    // ECPAY = 121
+    EcpayConfig ecpay = 121;
   }
 }
 

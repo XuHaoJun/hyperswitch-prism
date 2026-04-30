@@ -142,6 +142,12 @@ pub(crate) fn dummy_auth(connector: &ConnectorEnum) -> ConnectorSpecificConfig {
             base_url: None,
             secondary_base_url: None,
         },
+        ConnectorEnum::Ecpay => ConnectorSpecificConfig::Ecpay {
+            api_key: m(),
+            hash_key: k(),
+            hash_iv: k(),
+            base_url: None,
+        },
         ConnectorEnum::Bluesnap => ConnectorSpecificConfig::Bluesnap {
             username: u(),
             password: p(),

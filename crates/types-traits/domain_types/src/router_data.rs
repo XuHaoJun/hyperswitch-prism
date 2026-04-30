@@ -731,6 +731,12 @@ pub enum ConnectorSpecificConfig {
         client_secret: Secret<String>,
         base_url: Option<String>,
     },
+    Ecpay {
+        api_key: Secret<String>,
+        hash_key: Secret<String>,
+        hash_iv: Secret<String>,
+        base_url: Option<String>,
+    },
     Axisbank {
         merchant_kid: Secret<String>,
         juspay_kid: Secret<String>,
@@ -1049,6 +1055,11 @@ impl ConnectorSpecificConfig {
             PinelabsOnline {
                 client_id,
                 client_secret
+            },
+            Ecpay {
+                api_key,
+                hash_key,
+                hash_iv
             },
             Imerchantsolutions { api_key },
         )
@@ -1455,7 +1466,12 @@ impl ConnectorSpecificConfig {
                     client_id,
                     client_secret
                 },
-                Imerchantsolutions { api_key },
+                Ecpay {
+                    api_key,
+                    hash_key,
+                    hash_iv
+                },
+                Imerchantsolutions { api_key }
             ),
             serde_json::Value::Object(connector_patch),
         );
@@ -1975,6 +1991,12 @@ impl ForeignTryFrom<grpc_api_types::payments::ConnectorSpecificConfig> for Conne
                 client_id: pinelabs_online.client_id.ok_or_else(err)?,
                 client_secret: pinelabs_online.client_secret.ok_or_else(err)?,
                 base_url: pinelabs_online.base_url,
+            }),
+            AuthType::Ecpay(ecpay) => Ok(Self::Ecpay {
+                api_key: ecpay.api_key.ok_or_else(err)?,
+                hash_key: ecpay.hash_key.ok_or_else(err)?,
+                hash_iv: ecpay.hash_iv.ok_or_else(err)?,
+                base_url: ecpay.base_url,
             }),
             AuthType::Easebuzz(easebuzz) => Ok(Self::Easebuzz {
                 api_key: easebuzz.api_key.ok_or_else(err)?,
@@ -3011,6 +3033,15 @@ impl ForeignTryFrom<(&ConnectorAuthType, &connector_types::ConnectorEnum)>
                 ConnectorAuthType::BodyKey { api_key, key1 } => Ok(Self::PinelabsOnline {
                     client_id: api_key.clone(),
                     client_secret: key1.clone(),
+                    base_url: None,
+                }),
+                _ => Err(err().into()),
+            },
+            ConnectorEnum::Ecpay => match auth {
+                ConnectorAuthType::BodyKey { api_key, key1 } => Ok(Self::Ecpay {
+                    api_key: api_key.clone(),
+                    hash_key: key1.clone(),
+                    hash_iv: Secret::new("EkRm7iFT261dpevs".to_string()),
                     base_url: None,
                 }),
                 _ => Err(err().into()),
